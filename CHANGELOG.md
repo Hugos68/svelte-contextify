@@ -1,5 +1,15 @@
 # svelte-contextify
 
+## 0.2.0
+
+### Minor Changes
+
+- eedbf4f: Added warning when using duplicate keys, better docs
+
+### Patch Changes
+
+- e5596a2: Docs improvement
+
 ## 0.1.1
 
 ### Patch Changes
