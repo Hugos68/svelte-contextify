@@ -6,57 +6,65 @@ In most svelte apps using the context API you will see this pattern:
 
 ```html
 <!-- Parent.svelte -->
-<script>
+<script lang="ts">
 	import { setContext } from 'svelte';
+    import type { Session } from '...';
 
-	setContext('session', { user: 'Hugos68' });
+	setContext<Session>('session', { user: 'Hugos68' });
 </script>
 
 <!-- Child.svelte -->
-<script>
+<script lang="ts">
 	import { getContext } from 'svelte';
 
 	const session = getContext('session');
 </script>
 ```
 
-This is problematic because now have to keep track that both components use `session` as their key, so changing one won't change the other one (this can be very serious when having context that is being retrieved in multiple places).
+This is problematic for 2 reason:
+1. Duplicate code
+Because the key `session` is used in multiple places we also have to update it in multiple places when we want to change the key.
 
-This library was created to fix this problem, it only exposes 1 function called createContext and looks like this:
+2. Type safety
+Like reason 1 types also need to be defined twice because `getContext` has no clue what you are trying to get.
 
+
+This library was created to fix these problems, it only exposes 1 function called createContext and looks like this:
 ```ts
 import { getContext, setContext } from 'svelte';
+import type { Session } from '...';
 
 export function createContext<T>(key: string) {
-	return [
+    return [
         () => getContext<T>(key),
         (value: T) =>  setContext<T>(key, value)
     ];
 };
 ```
-
 Pretty simple right?
 
-This allows you to do this:
-
+This allows you to now do this:
 ```ts
-export const [getSession, setSession] = createContext('session');
+type Session = {
+    user: string;
+};
+
+export const [getSession, setSession] = createContext<Session>('session');
 ```
 
 ```html
 <!-- Parent.svelte -->
-<script>
+<script lang="ts">
 	import { setSession } from '...';
 
 	setSession({ user: 'Hugos68' });
 </script>
 
 <!-- Child.svelte -->
-<script>
+<script lang="ts">
 	import { getSession } from 'svelte';
 
 	const session = getSession();
 </script>
 ```
-
-As you can see the key is now only defined once and will update accordingly wherever it's used.
+Now we only need to define the key (in this case `session`) once, on top of that `getSession` now automatically returns the type `Session` without needing to specify it because it is already specified centrally in the `createContext` function.
