@@ -1,58 +1,64 @@
-# create-svelte
+# svelte-contextify
 
-Everything you need to build a Svelte library, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+A super simple library for easier context management across your app.
 
-Read more about creating a library [in the docs](https://kit.svelte.dev/docs/packaging).
+In most svelte apps using the context API you will see this pattern:
 
-## Creating a project
+```html
+<!-- Parent.svelte -->
+<script>
+    import { setContext } from 'svelte';
 
-If you're seeing this, you've probably already done this step. Congrats!
+    const session = createSession(...);
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+    setContext('session', session);
+</script>
 
-# create a new project in my-app
-npm create svelte@latest my-app
+<!-- Child.svelte -->
+<script>
+    import { getContext } from 'svelte';
+
+    const session = getContext('session');
+</script>
 ```
 
-## Developing
+This is problematic because now have to keep track that both components use `session` as their key, so changing one won't change the other one (this can be very serious when having context that is being retrieved in multiple places).
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+This library was created to fix this problem, it only exposes 1 function called createContext and looks like this:
+```js
+import { getContext, setContext } from 'svelte';
 
-```bash
-npm run dev
+export function createContext<T>(key: string) {
+	return [
+        () => getContext<T>(key),
+        (value: T) =>  setContext<T>(key, value)
+    ];
+};
+```
+Pretty simple right?
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+This allows you to do this:
+
+```js
+export const [getSession, setSession] = createContext('session');
 ```
 
-Everything inside `src/lib` is part of your library, everything inside `src/routes` can be used as a showcase or preview app.
+```html
+<!-- Parent.svelte -->
+<script>
+    import { getSession } from '...';
 
-## Building
+    const session = createSession(...);
 
-To build your library:
+    setSession(session);
+</script>
 
-```bash
-npm run package
+<!-- Child.svelte -->
+<script>
+    import { getSession } from 'svelte';
+
+    const session = getSession();
+</script>
 ```
 
-To create a production version of your showcase app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
-
-## Publishing
-
-Go into the `package.json` and give your package the desired name through the `"name"` option. Also consider adding a `"license"` field and point it to a `LICENSE` file which you can create from a template (one popular option is the [MIT license](https://opensource.org/license/mit/)).
-
-To publish your library to [npm](https://www.npmjs.com):
-
-```bash
-npm publish
-```
+As you can see the key is now only defined once and will update accordingly wherever it's used.
