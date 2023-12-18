@@ -13,6 +13,9 @@
 		"format": "prettier --write .",
 		"release": "pnpm run build && changeset publish"
 	},
+	"publishConfig": {
+		"access": "public"
+	},
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
