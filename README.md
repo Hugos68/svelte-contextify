@@ -24,7 +24,7 @@ This is problematic because now have to keep track that both components use `ses
 
 This library was created to fix this problem, it only exposes 1 function called createContext and looks like this:
 
-```js
+```ts
 import { getContext, setContext } from 'svelte';
 
 export function createContext<T>(key: string) {
@@ -39,7 +39,7 @@ Pretty simple right?
 
 This allows you to do this:
 
-```js
+```ts
 export const [getSession, setSession] = createContext('session');
 ```
 
