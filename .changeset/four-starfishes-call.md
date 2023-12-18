@@ -2,4 +2,4 @@
 'svelte-contextify': patch
 ---
 
-doc typo
+Minor doc typo
