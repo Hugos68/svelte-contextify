@@ -6,7 +6,7 @@ A tiny library for vastly improving context managament in Svelte apps.
 
 1. Requires you to define the context key only once
 2. Vastly improves type inference
-3. Warns about duplicate context keys
+3. Uses symbols to prevent duplicate contexts
 
 ## The Problem
 
@@ -45,7 +45,6 @@ This is problematic for 2 reason:
 2. Type safety,
    like reason 1 types also need to be defined twice because `getContext` has no clue what you are trying to get.
 
-
 ## How svelte-contextify fixes the problem
 
 This library was created to fix the problems mentioned in [the previous paragraph](#the-problem), it only exposes 1 function called createContext and looks like this:
@@ -53,16 +52,11 @@ This library was created to fix the problems mentioned in [the previous paragrap
 ```ts
 import { getContext, setContext } from 'svelte';
 
-const keys = new Set<string>();
-
 export type Context<T> = [() => T, (value: T) => void];
 
 export function createContext<T>(key: string): Context<T> {
-	if (keys.has(key)) {
-		console.warn(`Context with key "${key}" has already been created.`);
-	}
-	keys.add(key);
-	return [() => getContext<T>(key), (value: T) => setContext<T>(key, value)];
+	const uniqueKey = Symbol(key);
+	return [() => getContext<T>(uniqueKey), (value: T) => setContext<T>(uniqueKey, value)];
 }
 ```
 
