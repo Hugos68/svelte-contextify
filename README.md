@@ -40,7 +40,7 @@ This is problematic for 2 reason:
 
 ## How svelte-contextify fixes the problem
 
-This library was created to fix the problems mentioned in [thep previous paragraph](#the-problem), it only exposes 1 function called createContext and looks like this:
+This library was created to fix the problems mentioned in [the previous paragraph](#the-problem), it only exposes 1 function called createContext and looks like this:
 
 ```ts
 import { getContext, setContext } from 'svelte';
