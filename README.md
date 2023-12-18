@@ -31,11 +31,11 @@ In most svelte apps using the context API you will see this pattern:
 
 This is problematic for 2 reason:
 
-1. Duplicate code
-   Because the key `session` is used in multiple places we also have to update it in multiple places when we want to change the key.
+1. Duplicate code,
+   because the key `session` is used in multiple places we also have to update it in multiple places when we want to change the key.
 
-2. Type safety
-   Like reason 1 types also need to be defined twice because `getContext` has no clue what you are trying to get.
+2. Type safety,
+   like reason 1 types also need to be defined twice because `getContext` has no clue what you are trying to get.
 
 
 ## How svelte-contextify fixes the problem
