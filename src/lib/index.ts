@@ -1,8 +1,10 @@
 import { getContext, setContext } from 'svelte';
 
-export type Context<T> = [() => T, (value: T) => void];
+export function createContext<T>(): [() => T | undefined, (value: T) => void];
 
-export function createContext<T>(key: string): Context<T> {
-	const uniqueKey = Symbol(key);
-	return [() => getContext<T>(uniqueKey), (value: T) => setContext<T>(uniqueKey, value)];
+export function createContext<T>(fallback: T): [() => T, (value: T) => void];
+
+export function createContext<T>(fallback?: T) {
+	const key = Symbol();
+	return [() => getContext<T>(key) ?? fallback, (value: T) => setContext<T>(key, value), key];
 }
