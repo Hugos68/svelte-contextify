@@ -32,11 +32,18 @@ export type Session = {
 };
 ```
 
+```ts
+// session.ts
+export type Session = {
+	user: string;
+};
+```
+
 ```html
 <!-- Parent.svelte -->
 <script lang="ts">
 	import { setContext } from 'svelte';
-	import type { Session } from '...';
+	import type { Session } from '$lib/session.ts';
 
 	setContext<Session>('session', { user: 'Hugos68' });
 </script>
@@ -44,8 +51,9 @@ export type Session = {
 <!-- Child.svelte -->
 <script lang="ts">
 	import { getContext } from 'svelte';
+	import type { Session } from '$lib/session.ts';
 
-	const session = getContext('session');
+	const session = getContext<Session>('session');
 </script>
 ```
 
@@ -81,6 +89,7 @@ We return 3 things here:
 This allows you to turn the code snippet above into:
 
 ```ts
+// session.ts
 type Session = {
 	user: string;
 };
@@ -91,16 +100,16 @@ export const [getSession, setSession, key] = createContext<Session>();
 ```html
 <!-- Parent.svelte -->
 <script lang="ts">
-	import { setSession } from '...';
+	import { setSession } from './session.ts';
 
-	setSession({ user: 'Hugos68' });
+	setSession({ user: 'Hugos68' }); // Full type safety when setting the session
 </script>
 
 <!-- Child.svelte -->
 <script lang="ts">
-	import { getSession } from 'svelte';
+	import { getSession } from './session.ts';
 
-	const session = getSession();
+	const session = getSession(); // type Session is inferred
 </script>
 ```
 
