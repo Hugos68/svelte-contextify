@@ -4,19 +4,26 @@ A tiny library for vastly improving context managament in Svelte apps.
 
 ## Features
 
-1. Remove the need to specify a key twice
-2. Improved type inference
-3. Duplicate key prevention through warnings
+1. Requires you to define the context key only once
+2. Vastly improves type inference
+3. Warns about duplicate context keys
 
 ## The Problem
 
 In most svelte apps using the context API you will see this pattern:
 
+```ts
+// session.ts
+export type Session = {
+	user: string;
+};
+```
+
 ```html
 <!-- Parent.svelte -->
 <script lang="ts">
 	import { setContext } from 'svelte';
-	import type { Session } from '...';
+	import type { Session } from '$lib/session.ts';
 
 	setContext<Session>('session', { user: 'Hugos68' });
 </script>
@@ -24,8 +31,9 @@ In most svelte apps using the context API you will see this pattern:
 <!-- Child.svelte -->
 <script lang="ts">
 	import { getContext } from 'svelte';
+	import type { Session } from '$lib/session.ts';
 
-	const session = getContext('session');
+	const session = getContext<Session>('session');
 </script>
 ```
 
@@ -44,7 +52,6 @@ This library was created to fix the problems mentioned in [thep previous paragra
 
 ```ts
 import { getContext, setContext } from 'svelte';
-import type { Session } from '...';
 
 export function createContext<T>(key: string) {
 	return [() => getContext<T>(key), (value: T) => setContext<T>(key, value)];
@@ -56,6 +63,7 @@ Pretty simple right?
 This allows you to now do this:
 
 ```ts
+// session.ts
 type Session = {
 	user: string;
 };
@@ -66,16 +74,16 @@ export const [getSession, setSession] = createContext<Session>('session');
 ```html
 <!-- Parent.svelte -->
 <script lang="ts">
-	import { setSession } from '...';
+	import { setSession } from './session.ts';
 
-	setSession({ user: 'Hugos68' });
+	setSession({ user: 'Hugos68' }); // Full type safety when setting the session
 </script>
 
 <!-- Child.svelte -->
 <script lang="ts">
-	import { getSession } from 'svelte';
+	import { getSession } from './session.ts';
 
-	const session = getSession();
+	const session = getSession(); // type Session is inferred
 </script>
 ```
 
