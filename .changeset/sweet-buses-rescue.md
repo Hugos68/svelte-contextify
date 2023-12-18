@@ -1,5 +1,5 @@
 ---
-"svelte-contextify": minor
+'svelte-contextify': minor
 ---
 
 Released library
