@@ -1,16 +1,21 @@
 # svelte-contextify
 
-A tiny library for vastly improving context managament in Svelte apps.
+A tiny library for vastly improving context managament in Svelte apps by encapsulating the Context API.
 
 ## Features
 
-1. Remove the need to specify a key twice
-2. Improved type inference
-3. Duplicate key prevention through warnings
+1. Removes the need for keys
+2. Utilizes symbols to create unique keys
+3. Vastly improves type inference
 
-## The Problem
+## The problem
 
-In most svelte apps using the context API you will see this pattern:
+```ts
+// session.ts
+export type Session = {
+	user: string;
+};
+```
 
 ```html
 <!-- Parent.svelte -->
@@ -29,38 +34,43 @@ In most svelte apps using the context API you will see this pattern:
 </script>
 ```
 
-This is problematic for 2 reason:
+The snippet above show a fairly common use case, we want to store session in context (so it is SSR safe) and pass it down to a child so it can access it safely.
+This has 2 problems/annoyances:
 
-1. Duplicate code,
-   because the key `session` is used in multiple places we also have to update it in multiple places when we want to change the key.
-
-2. Type safety,
-   like reason 1 types also need to be defined twice because `getContext` has no clue what you are trying to get.
-
+1. We need to keep track of the context key (`session`) in 2 different places.
+2. We need to keep track of the type in 2 different places.
 
 ## How svelte-contextify fixes the problem
 
-This library was created to fix the problems mentioned in [the previous paragraph](#the-problem), it only exposes 1 function called createContext and looks like this:
-
 ```ts
 import { getContext, setContext } from 'svelte';
-import type { Session } from '...';
 
-export function createContext<T>(key: string) {
-	return [() => getContext<T>(key), (value: T) => setContext<T>(key, value)];
+export function createContext<T>(): [() => T | undefined, (value: T) => void];
+
+export function createContext<T>(init: T): [() => T, (value: T) => void];
+
+export function createContext<T>(init?: T) {
+	const key = Symbol();
+	return [() => getContext<T>(key) ?? init, (value: T) => setContext<T>(key, value), key];
 }
 ```
 
 Pretty simple right?
 
-This allows you to now do this:
+We return 3 things here:
+
+1. The get function: This is responsible for retrieving the value out of context
+2. The set function: This is responsible for setting the value in context
+3. The generated key: This is a unique symbol that is returned in case you need to use it outside of the supplied get or set functions
+
+This allows you to turn the code snippet above into:
 
 ```ts
 type Session = {
 	user: string;
 };
 
-export const [getSession, setSession] = createContext<Session>('session');
+export const [getSession, setSession, key] = createContext<Session>();
 ```
 
 ```html
@@ -79,4 +89,9 @@ export const [getSession, setSession] = createContext<Session>('session');
 </script>
 ```
 
-Now we only need to define the key (in this case `session`) once, on top of that `getSession` now automatically returns the type `Session` without needing to specify it because it is already specified centrally in the `createContext` function.
+This improves the experience in 2 main ways:
+
+1. No need to specify a key anymore (or keep track of)
+2. The type only needs to be specified once and is applied to both the getter and setter implicitly
+
+## API
