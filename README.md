@@ -13,12 +13,15 @@ A tiny library for vastly improving context managament in Svelte apps by encapsu
 ```
 npm i svelte-contextify
 ```
+
 ```
 pnpm add svelte-contextify
 ```
+
 ```
 yarn add svelte-contextify
 ```
+
 ```
 bun add svelte-contextify
 ```
@@ -117,4 +120,3 @@ This improves the experience in 2 main ways:
 
 1. No need to specify a key anymore (or keep track of)
 2. The type only needs to be specified once and is applied to both the getter and setter implicitly
-
