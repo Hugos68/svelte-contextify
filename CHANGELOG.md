@@ -1,5 +1,11 @@
 # svelte-contextify
 
+## 0.1.2
+
+### Patch Changes
+
+- 132ce75: Minor doc typo
+
 ## 0.3.0
 
 ### Minor Changes
