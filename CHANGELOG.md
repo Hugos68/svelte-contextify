@@ -1,5 +1,11 @@
 # svelte-contextify
 
+## 0.1.3
+
+### Patch Changes
+
+- b7446d5: Fixed types
+
 ## 0.1.2
 
 ### Patch Changes
