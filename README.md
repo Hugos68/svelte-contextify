@@ -35,22 +35,20 @@ export type Session = {
 };
 ```
 
-```ts
-// session.ts
-export type Session = {
-	user: string;
-};
-```
-
 ```html
 <!-- Parent.svelte -->
 <script lang="ts">
 	import { setContext } from 'svelte';
+	import Child from '$lib/Child.svelte';
 	import type { Session } from '$lib/session.ts';
 
 	setContext<Session>('session', { user: 'Hugos68' });
 </script>
 
+<Child />
+```
+
+```html
 <!-- Child.svelte -->
 <script lang="ts">
 	import { getContext } from 'svelte';
@@ -68,12 +66,9 @@ This has 2 problems/annoyances:
 
 ## How svelte-contextify fixes the problem
 
+svelte-contextify fixes this issue with quite a simple solution:
 ```ts
 import { getContext, setContext } from 'svelte';
-
-export function createContext<T>(): [() => T | undefined, (value: T) => T, symbol];
-
-export function createContext<T>(fallback: T): [() => T, (value: T) => T, symbol];
 
 export function createContext<T>(fallback?: T) {
 	const key = Symbol();
@@ -89,7 +84,7 @@ We return 3 things here:
 2. The set function: This is responsible for setting the value in context
 3. The generated key: This is a unique symbol that is returned in case you need to use it outside of the supplied get or set functions
 
-This allows you to turn the code snippet above into:
+This allows you to turn the code snippet from above into:
 
 ```ts
 // session.ts
@@ -103,11 +98,16 @@ export const [getSession, setSession, key] = createContext<Session>();
 ```html
 <!-- Parent.svelte -->
 <script lang="ts">
+	import Child from '$lib/Child.svelte';
 	import { setSession } from './session.ts';
 
 	setSession({ user: 'Hugos68' }); // Full type safety when setting the session
 </script>
 
+<Child />
+```
+
+```html
 <!-- Child.svelte -->
 <script lang="ts">
 	import { getSession } from './session.ts';
@@ -116,7 +116,7 @@ export const [getSession, setSession, key] = createContext<Session>();
 </script>
 ```
 
-This improves the experience in 2 main ways:
+Not only is it now more readable, it also improves the DX in 2 ways:
 
 1. No need to specify a key anymore (or keep track of)
 2. The type only needs to be specified once and is applied to both the getter and setter implicitly
