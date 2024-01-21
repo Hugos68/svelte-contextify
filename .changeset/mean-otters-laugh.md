@@ -1,5 +1,5 @@
 ---
-"svelte-contextify": patch
+'svelte-contextify': patch
 ---
 
 Fixed types
