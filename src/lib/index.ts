@@ -1,8 +1,22 @@
 import { getContext, setContext, hasContext } from 'svelte';
 
-export function createContext<T>(options: { fallback: T; onError?: () => void }): {
+export function createContext<T>(options: { fallback: T; onError: () => void }): {
 	get: () => T;
 	set: (value: T) => T;
+	has: () => boolean;
+	key: symbol;
+};
+
+export function createContext<T>(options: { fallback: T }): {
+	get: () => T;
+	set: (value: T) => T;
+	has: () => boolean;
+	key: symbol;
+};
+
+export function createContext<T>(options: { onError: () => void }): {
+	get: () => T;
+	set: (value: T) => T | undefined;
 	has: () => boolean;
 	key: symbol;
 };
