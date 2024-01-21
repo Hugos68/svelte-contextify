@@ -1,5 +1,12 @@
 # svelte-contextify
 
+## 0.2.1
+
+### Patch Changes
+
+- df901cf: Removed accidental testing exports
+- 8ca757e: Fixed types for the recent release
+
 ## 0.2.0
 
 ### Minor Changes
