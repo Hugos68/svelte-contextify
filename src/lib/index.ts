@@ -45,10 +45,3 @@ export function createContext<T>({
 		key
 	};
 }
-
-export const {
-	get: getStore,
-	set: setStore,
-	has: hasStore,
-	key: storeKey
-} = createContext<string>();
