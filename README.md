@@ -5,10 +5,13 @@ A tiny library for vastly improving context managament in Svelte apps by encapsu
 ## Features
 
 1. Removes the need for keys
-2. Utilizes symbols to create unique keys
-3. Vastly improves type inference
+2. Avoids key collision by using symbols
+3. Improves type inference for setting and getting context
+4. Improves error handling when retrieving unset context.
 
 ## Install
+
+### npm
 
 ```
 npm i svelte-contextify
@@ -25,6 +28,48 @@ yarn add svelte-contextify
 ```
 bun add svelte-contextify
 ```
+
+### Local
+
+Instead of adding another dependency to your project you can simply copy paste the code from `src/lib/index.ts` into your project.
+
+## API
+
+```ts
+const {
+	get,
+	set,
+	has,
+	key
+} = createContext({
+	fallback: 'foo',
+	onError: () => console.log('Uh oh');
+});
+```
+
+### fallback
+
+The `fallback` value will be returned when context is trying to be retrieved while context has not been set, the default value is undefined.
+
+### onError
+
+The `onError` callback will be called when context is trying to be retrieved while context has not been set.
+
+### get
+
+The `get` function returns context, if context has not been set it returns the `fallback` value.
+
+### set
+
+The `set` function sets context, returns the value that has been set.
+
+### has
+
+The `has` function returns a boolean wether context has been set.
+
+### key
+
+The `key` value is a unique symbol for the context.
 
 ## The problem
 
@@ -58,31 +103,16 @@ export type Session = {
 </script>
 ```
 
-The snippet above show a fairly common use case, we want to store session in context (so it is SSR safe) and pass it down to a child so it can access it safely.
+The snippet above show a fairly common use case, we want to store session in context in a parent so it's children can access it without prop drilling.
+
 This has 2 problems/annoyances:
 
 1. We need to keep track of the context key (`session`) in 2 different places.
-2. We need to keep track of the type in 2 different places.
+2. We need to keep track of the `Session` type in 2 different places.
 
 ## How svelte-contextify fixes the problem
 
-svelte-contextify fixes this issue with quite a simple solution:
-```ts
-import { getContext, setContext } from 'svelte';
-
-export function createContext<T>(fallback?: T) {
-	const key = Symbol();
-	return [() => getContext<T>(key) ?? fallback, (value: T) => setContext<T>(key, value), key];
-}
-```
-
-Pretty simple right?
-
-We return 3 things here:
-
-1. The get function: This is responsible for retrieving the value out of context
-2. The set function: This is responsible for setting the value in context
-3. The generated key: This is a unique symbol that is returned in case you need to use it outside of the supplied get or set functions
+svelte-contextify solves the problem by handling the key and type inference _for_ you using a `createContext` function.
 
 This allows you to turn the code snippet from above into:
 
@@ -91,8 +121,7 @@ This allows you to turn the code snippet from above into:
 type Session = {
 	user: string;
 };
-
-export const [getSession, setSession, key] = createContext<Session>();
+export const { get: getSession, set: setSession, has: hasSession, key } = createContext<Session>();
 ```
 
 ```html
@@ -101,7 +130,7 @@ export const [getSession, setSession, key] = createContext<Session>();
 	import Child from '$lib/Child.svelte';
 	import { setSession } from './session.ts';
 
-	setSession({ user: 'Hugos68' }); // Full type safety when setting the session
+	setSession({ user: 'Hugos68' }); // Type safety and intellisense
 </script>
 
 <Child />
@@ -112,11 +141,6 @@ export const [getSession, setSession, key] = createContext<Session>();
 <script lang="ts">
 	import { getSession } from './session.ts';
 
-	const session = getSession(); // type Session is inferred
+	const session = getSession(); // Session type is inferred
 </script>
 ```
-
-Not only is it now more readable, it also improves the DX in 2 ways:
-
-1. No need to specify a key anymore (or keep track of)
-2. The type only needs to be specified once and is applied to both the getter and setter implicitly
