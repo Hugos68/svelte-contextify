@@ -21,11 +21,9 @@
 		"ci:format": "biome format",
 		"ci:lint": "biome lint",
 		"ci:check": "biome check",
-		"publish": "changeset publish"
+		"ci:publish": "pnpm run build && changeset publish"
 	},
-	"files": [
-		"dist"
-	],
+	"files": ["dist"],
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"exports": {
