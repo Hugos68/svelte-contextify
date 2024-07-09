@@ -19,7 +19,7 @@ interface Options<value> {
 }
 
 /**
- * The return type of the `createContext` function.
+ * Return type of the `createContext` function.
  */
 interface Context<SetValue, GetValue = SetValue> {
 	/**
@@ -68,7 +68,7 @@ interface CreateContext {
 
 /**
  * Creates a context object
-
+ *
  * @param {Options<Value>} options - Options
  * @return {Context<Value>} The created context object
  */

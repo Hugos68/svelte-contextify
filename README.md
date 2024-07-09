@@ -1,26 +1,31 @@
 # svelte-contextify
 
-A tiny library for vastly improving context managament in Svelte apps by encapsulating the Context API.
+A tiny library for vastly improving context managament within your Svelte/SvelteKit apps by encapsulating the [Context API](https://svelte.dev/docs/svelte#setcontext).
 
 ## Features
 
 - Removes the need for keys.
 - Removes key collisions by using the [Symbol API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol).
-- Ensure type safety when setting and getting context.
-- Improved error handling when retrieving unset context.
+- Improves type safety when setting and getting context.
+- Improves error handling when retrieving unset context.
 
 ## Installation
 
-```
+Install through [npm](https://www.npmjs.com/package/svelte-contextify) using your preferred package manager:
+
+```bash
 npm i svelte-contextify
 ```
-```
+
+```bash
 pnpm add svelte-contextify
 ```
-```
+
+```bash
 yarn add svelte-contextify
 ```
-```
+
+```bash
 bun add svelte-contextify
 ```
 
@@ -28,7 +33,7 @@ bun add svelte-contextify
 
 ### `createContext(options)`
 
-See: [Source](./src/index.ts#L75)
+See: [source](./src/index.ts#L75)
 
 ## The problem
 
@@ -67,14 +72,14 @@ export type { Session };
 
 	const session = getContext<Session>('session');
 </script>
-
+s
 <p>Welcome: {session.username}!</p>
 ```
 
-While this approach does work, it is flawed for 2 reasons:
+While this approach does work, it is flawed for two reasons:
 
-1. We need to keep track of the context key (`session`) in 2 different places.
-2. We need to keep track of the `Session` type in 2 different places.
+1. We need to keep track of the context key (`session`) in atleast two different places.
+2. We need to keep track of the `Session` type in atleast two different places.
 
 ## How svelte-contextify solves the problem
 
@@ -127,10 +132,10 @@ export type { Session };
 <p>Welcome: {session.username}!</p>
 ```
 
-As you can see this notably improves using context as we now:
+As you can see this notably improved using context as we now:
 
-- Don't need to define a key or worry about it.
-- Pass the type once.
+- Don't need to define a key at all, which removes the need to keep the keys in sync.
+- Only have to pass the type once when creating the context, which removes the need from keeping the types in sync.
 
 ## License
 
