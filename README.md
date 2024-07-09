@@ -7,6 +7,7 @@ A tiny library for vastly improving context managament in Svelte apps by encapsu
 - Removes the need for keys.
 - Removes key collisions by using the [Symbol API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol).
 - Ensure type safety when setting and getting context.
+- Improved error handling when retrieving unset context.
 
 ## Installation
 
@@ -25,9 +26,9 @@ bun add svelte-contextify
 
 ## API
 
-### `createContext(defaultValue)`
+### `createContext(options)`
 
-See: [Source](./src/index.ts)
+See: [Source](./src/index.ts#L75)
 
 ## The problem
 
