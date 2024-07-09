@@ -1,5 +1,11 @@
 # svelte-contextify
 
+## 1.0.1
+
+### Patch Changes
+
+- ceb8674: Renamed `fallback` to `defaultValue` because this is the more common term in other frameworks
+
 ## 1.0.0
 
 ### Major Changes
