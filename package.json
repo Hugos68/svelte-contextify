@@ -23,9 +23,7 @@
 		"ci:check": "biome check",
 		"ci:publish": "pnpm run build && changeset publish"
 	},
-	"files": [
-		"dist"
-	],
+	"files": ["dist"],
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"exports": {
