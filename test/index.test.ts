@@ -5,5 +5,5 @@ import Parent from './Parent.svelte';
 test('', () => {
 	const parent = render(Parent);
 
-	expect(parent.getByTestId('context-without-options'))
+	expect(parent.getByTestId('context-without-options'));
 });
