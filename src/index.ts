@@ -67,7 +67,7 @@ interface CreateContext {
 }
 
 /**
- * Creates a context object
+ * Creates a context object.
  *
  * @param {Options<Value>} options - Options
  * @return {Context<Value>} The created context object
