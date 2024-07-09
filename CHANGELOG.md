@@ -1,5 +1,11 @@
 # svelte-contextify
 
+## 1.0.2
+
+### Patch Changes
+
+- ba2d0b7: Improved documentation
+
 ## 1.0.1
 
 ### Patch Changes
