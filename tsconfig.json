@@ -1,15 +1,19 @@
 {
-	"extends": "./.svelte-kit/tsconfig.json",
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"display": "Node LTS",
+	"_version": "20.1.0",
 	"compilerOptions": {
-		"allowJs": true,
-		"checkJs": true,
-		"esModuleInterop": true,
-		"forceConsistentCasingInFileNames": true,
-		"resolveJsonModule": true,
-		"skipLibCheck": true,
-		"sourceMap": true,
+		"outDir": "${configDir}/dist",
+		"lib": ["es2023", "DOM"],
+		"module": "node16",
+		"types": ["svelte"],
+		"target": "es2022",
 		"strict": true,
-		"module": "NodeNext",
-		"moduleResolution": "NodeNext"
-	}
+		"noUncheckedIndexedAccess": true,
+		"declaration": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"moduleResolution": "node16"
+	},
+	"include": ["${configDir}/src"]
 }

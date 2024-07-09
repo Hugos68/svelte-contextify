@@ -4,143 +4,133 @@ A tiny library for vastly improving context managament in Svelte apps by encapsu
 
 ## Features
 
-1. Removes the need for keys
-2. Avoids key collision by using symbols
-3. Improves type inference for setting and getting context
-4. Improves error handling when retrieving unset context.
+- Removes the need for keys.
+- Removes key collisions by using the [Symbol API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol).
+- Ensure type safety when setting and getting context.
 
-## Install
-
-### npm
+## Installation
 
 ```
 npm i svelte-contextify
 ```
-
 ```
 pnpm add svelte-contextify
 ```
-
 ```
 yarn add svelte-contextify
 ```
-
 ```
 bun add svelte-contextify
 ```
 
-### Local
-
-Instead of adding another dependency to your project you can simply copy paste the code from `src/lib/index.ts` into your project.
-
 ## API
 
-```ts
-const {
-	get,
-	set,
-	has,
-	key
-} = createContext({
-	fallback: 'foo',
-	onError: () => console.log('Uh oh');
-});
-```
+### `createContext(defaultValue)`
 
-### fallback
-
-The `fallback` value will be returned when context is trying to be retrieved while context has not been set, the default value is undefined.
-
-### onError
-
-The `onError` callback will be called when context is trying to be retrieved while context has not been set.
-
-### get
-
-The `get` function returns context, if context has not been set it returns the `fallback` value.
-
-### set
-
-The `set` function sets context, returns the value that has been set.
-
-### has
-
-The `has` function returns a boolean wether context has been set.
-
-### key
-
-The `key` value is a unique symbol for the context.
+See: [Source](./src/index.ts)
 
 ## The problem
 
+Let's say we want to share the `session` of a user in our app through context, one might do that like so:
+
 ```ts
-// session.ts
-export type Session = {
-	user: string;
-};
+/** session.ts */
+
+interface Session {
+	username: string;
+}
+
+export type { Session };
 ```
 
 ```html
-<!-- Parent.svelte -->
+<!-- App.svelte -->
+
 <script lang="ts">
+	import Component from '$lib/Component.svelte';
 	import { setContext } from 'svelte';
-	import Child from '$lib/Child.svelte';
 	import type { Session } from '$lib/session.ts';
 
-	setContext<Session>('session', { user: 'Hugos68' });
+	setContext<Session>('session', { username: 'Hugos68' });
 </script>
 
-<Child />
+<Component />
 ```
 
 ```html
-<!-- Child.svelte -->
+<!-- Component.svelte -->
+
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import type { Session } from '$lib/session.ts';
 
 	const session = getContext<Session>('session');
 </script>
+
+<p>Welcome: {session.username}!</p>
 ```
 
-The snippet above show a fairly common use case, we want to store session in context in a parent so it's children can access it without prop drilling.
-
-This has 2 problems/annoyances:
+While this approach does work, it is flawed for 2 reasons:
 
 1. We need to keep track of the context key (`session`) in 2 different places.
 2. We need to keep track of the `Session` type in 2 different places.
 
-## How svelte-contextify fixes the problem
+## How svelte-contextify solves the problem
 
-svelte-contextify solves the problem by handling the key and type inference _for_ you using a `createContext` function.
+This library aims to solve the problem by handling the key and type inference _for_ you using the `createContext` function.
 
-This allows you to turn the code snippet from above into:
+This allows you to refactor the code from above, into:
 
 ```ts
-// session.ts
-type Session = {
-	user: string;
-};
-export const { get: getSession, set: setSession, has: hasSession, key } = createContext<Session>();
+/** session.ts */
+
+import { createContext } from 'svelte-contextify';
+
+interface Session {
+	username: string;
+}
+
+const {
+	get: getSession,
+	set: setSession
+} = createContext<Session>({ username: 'guest' });
+
+export { getSession, setSession };
+export type { Session };
 ```
 
 ```html
-<!-- Parent.svelte -->
-<script lang="ts">
-	import Child from '$lib/Child.svelte';
-	import { setSession } from './session.ts';
+<!-- App.svelte -->
 
-	setSession({ user: 'Hugos68' }); // Type safety and intellisense
+<script lang="ts">
+	import Component from '$lib/Component.svelte';
+	import { setSession } from '$lib/session.ts';
+
+	setSession({ username: 'Hugos68' });
+	//         ^ Type safety when setting context
 </script>
 
-<Child />
+<Component />
 ```
 
 ```html
-<!-- Child.svelte -->
-<script lang="ts">
-	import { getSession } from './session.ts';
+<!-- Component.svelte -->
 
-	const session = getSession(); // Session type is inferred
+<script lang="ts">
+	import { getSession } from '$lib/session.ts';
+
+	const session = getSession('session');
+	//    ^ Type is inferred as Session
 </script>
+
+<p>Welcome: {session.username}!</p>
 ```
+
+As you can see this notably improves using context as we now:
+
+- Don't need to define a key or worry about it.
+- Pass the type once.
+
+## License
+
+This project is licensed under the Apache-2.0 License - see the [LICENSE](LICENSE.txt) file for details.
