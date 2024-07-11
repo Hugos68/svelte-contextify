@@ -99,7 +99,7 @@ interface Session {
 const {
 	get: getSession,
 	set: setSession
-} = createContext<Session>({ username: 'guest' });
+} = createContext<Session>({ defaultValue: { username: 'guest' } });
 
 export { getSession, setSession };
 export type { Session };
