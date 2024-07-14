@@ -1,10 +1,8 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - 'main'
-    
+  pull_request:
+
 env:
   node_version: 20
   pnpm_version: 9
@@ -21,7 +19,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.node_version }}
-          cache: 'pnpm'
+          cache: "pnpm"
       - name: Install dependencies
         run: pnpm install
       - name: Run format
@@ -37,7 +35,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.node_version }}
-          cache: 'pnpm'
+          cache: "pnpm"
       - name: Install dependencies
         run: pnpm install
       - name: Run lint
@@ -53,7 +51,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.node_version }}
-          cache: 'pnpm'
+          cache: "pnpm"
       - name: Install dependencies
         run: pnpm install
       - name: Run check
@@ -69,7 +67,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.node_version }}
-          cache: 'pnpm'
+          cache: "pnpm"
       - name: Install dependencies
         run: pnpm install
       - name: Build package
