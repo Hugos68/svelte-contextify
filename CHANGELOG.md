@@ -1,5 +1,11 @@
 # svelte-contextify
 
+## 1.0.4
+
+### Patch Changes
+
+- eb51b62: fix: move svelte to devDependencies, update package.json exports
+
 ## 1.0.3
 
 ### Patch Changes
