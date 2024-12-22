@@ -1,3 +1,8 @@
+> [!NOTE]  
+> This repository has been archived in favor of: https://runed.dev/docs/utilities/context.
+>
+> While this package will remain published, it will no longer receive updates of any sort.
+
 # svelte-contextify
 
 A tiny library for vastly improving context managament within your Svelte/SvelteKit apps by encapsulating the [Context API](https://svelte.dev/docs/svelte#setcontext).
